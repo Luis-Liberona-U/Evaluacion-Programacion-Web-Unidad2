@@ -13,15 +13,24 @@ const pool = mysql.createPool({ //Conexion a la base de datos
 })
 
 
+server.use(session({ //session
+    secret: 'secreto',
+    resave: false,
+    saveUninitialized: false,
+    cookie: { 
+        httpOnly: true, 
+        secure: false, 
+        maxAge: 300000 }
+}));
+
 
 server.use(express.urlencoded({ extended: true}))
 server.set('view engine', 'ejs'); 
 
 
-server.get('/formulario', (req, res) => {  //Renderiza mi formulario
-    res.render('formulario');  
+server.get('/formulario', (req, res) => {
+    res.render('formulario'); 
 });
-
 
 
 server.post('/registrar', (req, res) => {   //Post para obtener datos y introducirlos en al base de datos
@@ -36,9 +45,13 @@ server.post('/registrar', (req, res) => {   //Post para obtener datos y introduc
 
         const sql = 'INSERT INTO usuarios (nombre, correo, edad) VALUES (?, ?, ?)'; //Consulta de insertar el usuario
         
-        pool.query(sql, [nombre, correo, edad], () => {  //Realizo la consulta con los datos 
+        pool.query(sql, [nombre, correo, edad], (err, resultado) => {  
+            if (err) {
+                return res.render('formulario', { error: "Error al insertar en la base de datos." + err.message });
+            }
 
-
+            req.session.usuarioActivo = nombre;
+            
             res.redirect('/panel');
         });
 
@@ -49,23 +62,33 @@ server.post('/registrar', (req, res) => {   //Post para obtener datos y introduc
 
 });
 
-
-        
-
-
-
 server.get('/panel', (req, res) => {
-    res.render('panel'); 
+    
+    if (req.session.usuarioActivo) {
+        
+        pool.query('SELECT * FROM usuarios', (err, filas) => { // 
+            if (err) {
+                return res.send("Error al leer la tabla usuarios.");
+            }
+
+            res.render('panel', { 
+                usuarioLogueado: req.session.usuarioActivo, 
+                listaUsuarios: filas 
+            });
+        });
+
+    } else {
+        res.render('formulario', { error: "Acceso denegado primero debes introducir tus datos." });
+    }
 });
 
 
-
-
-
-
-
-
-
+server.get('/logout', (req, res) => { //Cerrar la sesion
+    req.session.destroy(() => {
+        res.redirect('/formulario');
+    });
+});
+        
 
 
 server.listen(port, () =>{

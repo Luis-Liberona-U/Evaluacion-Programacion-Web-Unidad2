@@ -6,12 +6,32 @@
     <title>Lista de Contactos</title>
 </head>
 <body>
-    <table>
-
-
-
-        
-    </table>
+    <h1> Contactos </h1>
+    <p>Bienvenido, <b><%= usuarioLogueado %></b></p>
     
+    <hr>
+
+    <h3>Tabla de Usuarios Guardados:</h3>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Correo</th>
+            <th>Edad</th>
+        </tr>
+
+        <% listaUsuarios.forEach(function(user) { %>
+            <tr>
+                <td><%= user.id %></td>
+                <td><%= user.nombre %></td>
+                <td><%= user.correo %></td>
+                <td><%= user.edad %> años</td>
+            </tr>
+        <% }); %>
+    </table>
+
+    <br><br>
+    <a href="/logout">Cerrar Sesión Segura</a>
+
 </body>
 </html>
