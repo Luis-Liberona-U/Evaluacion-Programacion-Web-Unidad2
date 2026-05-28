@@ -10,6 +10,17 @@
 3.- Se crea la carpeta views que contendra nuestras vistas de usuario o archivos ejs que contendran el formulario y el panel
     que mostrara la lista de contactos ingresados.
 
+5.- Se crea mediante Xampp la base datos utilzando el sigueinte script:
+    CREATE DATABASE IF NOT EXISTS contactos;
+    USE contactos;
+
+    CREATE TABLE usuarios (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        nombre VARCHAR(100) NOT NULL,
+        correo VARCHAR(100) NOT NULL,
+        edad INT NOT NULL
+    );
+
 4.- Se crea la pool de mysql, esto nos permite que nuestro servidor se pueda conectar a la base de datosm utilizando en este caso
     localhost, y los datos de validacion predefinidos como usuario 'root' y sin contraseña, ademas de especificar la base de datos 
     que se usara, en este caso "contactos"
@@ -42,3 +53,6 @@
     que borra por completo lo explicado anteriormente, borra el casillero en memoria del servidor y elimina la cookie del navegador
     para redirigir al usuario al formulario nuevament.
 
+
+11.- Si el usuario intenta abrir http://localhost:9000/panel sera enviado automaticamente al formulario al no tener su 
+    sesion activa o mejor dicho registrada al introducir los datos en el formulario
